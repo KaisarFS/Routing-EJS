@@ -74,7 +74,8 @@ app.listen(port, () => {
 
 Lalu, bagaimana apabila kita mau lebih modular lagi?
 - kita bisa menambahkan file didalam folder routes, untuk menghandle endpoint-endpoint agar lebih modular. Contoh kita memiliki endpoint `/companies` dan `/softdrinks`
-- kita bisa menambahkan 2 file "companyRoute" & "softdrinkRoutes" (penamaan filenya singular)
+- kita bisa menambahkan 2 file "companyRoute" & "softdrinkRoutes" (penamaan filenya singular camelCase)
+<span style="color: red;">Edit: penamaan file route yang benar adalah "company.js" dan "softDrink.js"</span>
 ![penamaan  file  2](./assets/b.png)
 - di dalam file companyRoute misalnya, kita lakukan hal yang sama untuk buat handlernya
 
