@@ -74,7 +74,7 @@ app.listen(port, () => {
 
 Lalu, bagaimana apabila kita mau lebih modular lagi?
 - kita bisa menambahkan file didalam folder routes, untuk menghandle endpoint-endpoint agar lebih modular. Contoh kita memiliki endpoint `/companies` dan `/softdrinks`
-- kita bisa menambahkan 2 file "companyRoute" & "softdrinkRoutes"
+- kita bisa menambahkan 2 file "companyRoute" & "softdrinkRoutes" (penamaan filenya singular)
 ![penamaan  file  2](./assets/b.png)
 - di dalam file companyRoute misalnya, kita lakukan hal yang sama untuk buat handlernya
 
@@ -207,3 +207,103 @@ di file home.ejs
 ```
 
 lebih lengkap tentang scripplet ejs: [klik disini lalu scroll bagian 'tags'](https://ejs.co/#docs)
+
+### Handle add dan update
+
+Untuk menghandle add dan update,ada beberapa hal yang harus dipastikan terlebih dahulu:
+
+1. Pastikan membuat 2 endpoint untuk handle add/update yaitu method "get" dan "post". contoh:
+
+```js
+router.get('/add', (req, res) => {
+  // disini berfungsi untuk merender halaman add form
+})
+
+router.post('/add', (req, res) => {
+  // disini berfungsi untuk handle add nya
+})
+```
+
+2. Pastikan dalam file app.js sudah terpasang `app.use(express.urlencoded({ extended: true }))` agar aplikasi kita bisa mendapatkan req.body. Maka file app.js kita akan seperti ini:
+```js
+const express = require('express')
+const app = express()
+const PORT = 3000
+
+const router = require('./routes/');
+
+// set view engine ejs
+app.set("view engine", "ejs")
+
+// menggunakan middleware urlencoded utk ambil req.body
+app.use(express.urlencoded({ extended: true }))
+
+// memakai router
+app.use("/", router)
+
+app.listen(PORT, () => {
+    console.log("Dont need you", PORT);
+})
+```
+3. Pastikan kita  membuat file ejs untuk form yang nanti akan di render
+
+```html
+...
+<body>
+  <h2>nambah softdrink</h2>
+  <form action="/softdrinks/add" method="post"><br><br>
+    <!--  action mengarah ke endpoint post yg kita buat tadi -->
+    <!--  method mengarah ke method untuk endpointnya -->
+  </form>
+</body>
+...
+```
+4. Pastikan dalam file ejs form kita sudah diberi nama agar mendapat property dari inputan
+
+```html
+...
+<body>
+  <h2>nambah softdrink</h2>
+  <form action="/softdrinks/add" method="post"><br><br>
+    <input type="text" name="name" placeholder="Name"><br><br>
+    <input type="number" name="price" placeholder="price"><br><br>
+    <input type="text" name="variant" placeholder="variant"><br><br>
+    <select name="CompanyId">
+      <% companies.forEach((el) => { %>
+        <option value="<%= el.id%>"><%= el.name %></option>
+      <% }) %>
+      <!-- ini contoh untuk input select option yang dinamis -->
+    </select>
+    <input type="submit" value="Submit">
+  </form>
+</body>
+...
+```
+
+5. Untuk handle edit, kita dapat gunakan tag `value` untuk populate data
+
+```html
+...
+<body>
+  <h2>nambah softdrink</h2>
+  <form action="/softdrinks/add" method="post"><br><br>
+
+    <!-- disini kita populate form name -->
+    <input type="text" name="name" value="<%= data.name %>" placeholder="Name"><br><br>
+    <!-- -->
+
+    <input type="number" name="price" placeholder="price"><br><br>
+    <input type="text" name="variant" placeholder="variant"><br><br>
+    <select name="CompanyId">
+      <% companies.forEach((el) => { %>
+        <option value="<%= el.id%>"><%= el.name %></option>
+      <% }) %>
+      <!-- ini contoh untuk input select option yang dinamis -->
+    </select>
+    <input type="submit" value="Submit">
+  </form>
+</body>
+...
+```
+
+End~
